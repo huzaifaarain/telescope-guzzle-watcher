@@ -63,6 +63,29 @@ class TelescopeGuzzleWatcher extends Watcher
             $entry->user(Auth::user());
         }
 
+        if (config('telescope-guzzle-watcher.enable_uri_tags') === true) {
+            $entry->tags(static::extractTagsFromUri($stats->getRequest()->getUri()));
+        }
+
         return $entry;
+    }
+
+    private static function extractTagsFromUri(string $uri)
+    {
+        $parsedURI = parse_url($uri);
+        $tags = [$parsedURI['host']];
+        if (array_key_exists("path", $parsedURI)) {
+            $pathArr = array_filter(explode("/", $parsedURI['path']));
+            $tags = array_merge($tags, $pathArr);
+        }
+
+        $exceptTags = config('telescope-guzzle-watcher.exclude_words_from_uri_tags');
+        if (count($exceptTags) > 0) {
+            $tags = Arr::where($tags, function ($tag) use ($exceptTags) {
+                return !in_array($tag, $exceptTags);
+            });
+        }
+
+        return $tags;
     }
 }

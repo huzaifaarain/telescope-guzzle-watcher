@@ -28,4 +28,29 @@ return [
     */
 
     "except_response_headers" => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable URI Tags
+    |--------------------------------------------------------------------------
+    |
+    | This value is used for determining wether the watcher should parse the url
+    | and add it's segments as telescope tags
+    |
+    |
+    */
+
+    "enable_uri_tags" => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exclude words from URI tags
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to exclude words or patterns that should
+    | be excluded from the tags list
+    |
+    */
+
+    "exclude_words_from_uri_tags" => [],
 ];
