@@ -9,6 +9,7 @@
 This is a simple package that provide custom watcher for intercepting http requests using `guzzlehttp/guzzle` library. The `TelescopeGuzzleWatcher` uses the [on_stats](https://docs.guzzlephp.org/en/stable/request-options.html#on-stats) request option. The watcher extract the data by rewinding the request and response and then it uses the `Telescope::recordClientRequest` for recording the requests in a telescope.
 
 Once the installation and configurations are completed, you will be able to see the request logs under `telescope/client-requests`
+
 ## Installation
 
 You can install the package via composer:
@@ -24,23 +25,29 @@ You can publish the config file with:
 ```bash
 php artisan vendor:publish --tag="telescope-guzzle-watcher-config"
 ```
+
 This is the contents of the published config file:
 
 ```php
 return [
     "except_request_headers" => [],
     "except_response_headers" => [],
+    "enable_uri_tags" => true,
+    "exclude_words_from_uri_tags" => [],
 ];
 ```
-You can set the headers that needs to be excluded such API Keys or other sensitive information.
+
+You can set the headers that needs to be excluded such API Keys or other sensitive information. You can also tag uri segments by converting them into an array. This feature can be toggled true/false.
 
 Edit `config/telescope.php` file and add the watcher
+
 ```php
 return [
     // other telescope configurations
      \MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher::class,
 ];
 ```
+
 The watcher depends on the `Service Container` and every instance of guzzle client must be resolve using `Service Container`.
 
 ```php
