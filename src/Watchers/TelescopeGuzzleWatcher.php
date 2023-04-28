@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\Watchers\Watcher;
@@ -57,6 +58,10 @@ class TelescopeGuzzleWatcher extends Watcher
             'response_headers' => Arr::except($stats->getResponse()->getHeaders(), config('telescope-guzzle-watcher.except_request_headers', [])),
             'response' => json_decode($stats->getResponse()->getBody()->getContents(), true)
         ]);
+
+        if (Auth::check()) {
+            $entry->user(Auth::user());
+        }
 
         return $entry;
     }
