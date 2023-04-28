@@ -2,12 +2,30 @@
 
 // config for MuhammadHuzaifa/TelescopeGuzzleWatcher
 return [
-    /**
-     * headers mentioned in the except_request_headers will be excluded from the request headers.
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Except Request Headers
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to exclude the request headers from
+    | being recorded under the telescope. You can exclude any number of
+    | headers containing sensitive information
+    |
+    */
+
     "except_request_headers" => [],
-    /**
-     * headers mentioned in the except_response_headers will be excluded from the response headers.
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Except Response Headers
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to exclude the response headers from
+    | being recorded under the telescope. You can exclude any number of
+    | headers containing sensitive information
+    |
+    */
+
     "except_response_headers" => [],
 ];
