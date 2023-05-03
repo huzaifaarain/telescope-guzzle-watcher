@@ -4,7 +4,6 @@ namespace MuhammadHuzaifa\TelescopeGuzzleWatcher;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use MuhammadHuzaifa\TelescopeGuzzleWatcher\Commands\TelescopeGuzzleWatcherCommand;
 
 class TelescopeGuzzleWatcherServiceProvider extends PackageServiceProvider
 {

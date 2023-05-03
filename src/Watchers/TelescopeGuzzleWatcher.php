@@ -14,7 +14,6 @@ use Laravel\Telescope\Watchers\Watcher;
 
 class TelescopeGuzzleWatcher extends Watcher
 {
-
     public function register($app)
     {
         $app->bind(
@@ -48,19 +47,19 @@ class TelescopeGuzzleWatcher extends Watcher
     {
         $stats->getResponse()?->getBody()->rewind();
         $stats->getRequest()?->getBody()->rewind();
-        $requestBody = json_decode($stats->getRequest()?->getBody()->getContents() ?? "", true);
+        $requestBody = json_decode($stats->getRequest()?->getBody()->getContents() ?? '', true);
         $queryString = null;
         parse_str($stats->getRequest()?->getUri()->getQuery(), $queryString);
-        $payload = array_merge(["queryString" => $queryString ?? []], ["body" => $requestBody ?? []]);
+        $payload = array_merge(['queryString' => $queryString ?? []], ['body' => $requestBody ?? []]);
 
         $entry = IncomingEntry::make([
             'method' => $stats->getRequest()->getMethod(),
-            'uri' => strtok($stats->getRequest()->getUri(), "?"),
+            'uri' => strtok($stats->getRequest()->getUri(), '?'),
             'headers' => Arr::except($stats->getRequest()->getHeaders(), config('telescope-guzzle-watcher.except_request_headers', [])),
             'payload' => $payload,
             'response_status' => $stats->getResponse()->getStatusCode(),
             'response_headers' => Arr::except($stats->getResponse()->getHeaders(), config('telescope-guzzle-watcher.except_request_headers', [])),
-            'response' => json_decode($stats->getResponse()->getBody()->getContents(), true)
+            'response' => json_decode($stats->getResponse()->getBody()->getContents(), true),
         ]);
 
         if (Auth::check()) {
@@ -78,15 +77,15 @@ class TelescopeGuzzleWatcher extends Watcher
     {
         $parsedURI = parse_url($uri);
         $tags = [$parsedURI['host']];
-        if (array_key_exists("path", $parsedURI)) {
-            $pathArr = array_filter(explode("/", $parsedURI['path']));
+        if (array_key_exists('path', $parsedURI)) {
+            $pathArr = array_filter(explode('/', $parsedURI['path']));
             $tags = array_merge($tags, $pathArr);
         }
 
         $exceptTags = config('telescope-guzzle-watcher.exclude_words_from_uri_tags');
         if (count($exceptTags) > 0) {
             $tags = Arr::where($tags, function ($tag) use ($exceptTags) {
-                return !in_array($tag, $exceptTags);
+                return ! in_array($tag, $exceptTags);
             });
         }
 

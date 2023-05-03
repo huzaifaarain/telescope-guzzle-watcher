@@ -14,7 +14,7 @@ return [
     |
     */
 
-    "except_request_headers" => [],
+    'except_request_headers' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ return [
     |
     */
 
-    "except_response_headers" => [],
+    'except_response_headers' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +40,7 @@ return [
     |
     */
 
-    "enable_uri_tags" => true,
+    'enable_uri_tags' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -52,5 +52,5 @@ return [
     |
     */
 
-    "exclude_words_from_uri_tags" => [],
+    'exclude_words_from_uri_tags' => [],
 ];
