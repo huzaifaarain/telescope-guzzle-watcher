@@ -8,14 +8,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
-use Riverline\MultiPartParser\StreamedPart;
-
 
 class TelescopeGuzzleRecorder
 {
     private TransferStats $transferStats;
 
     private Request $request;
+
     private Response $response;
 
     public function __construct(TransferStats $transferStats)
@@ -33,13 +32,13 @@ class TelescopeGuzzleRecorder
 
     private function recordRequest()
     {
-        if (!Telescope::isRecording()) {
+        if (! Telescope::isRecording()) {
             return;
         }
 
         $entry = IncomingEntry::make([
             'method' => $this->request->method(),
-            'uri' => strtok($this->request->url(), "?"),
+            'uri' => strtok($this->request->url(), '?'),
             'headers' => $this->headers($this->request->headers()),
             'payload' => array_merge(
                 ['query_string' => $this->request->queryString()],
@@ -103,7 +102,7 @@ class TelescopeGuzzleRecorder
         }
 
         if ($response->redirect()) {
-            return 'Redirected to ' . $response->header('Location');
+            return 'Redirected to '.$response->header('Location');
         }
 
         if (empty($content)) {
@@ -182,7 +181,7 @@ class TelescopeGuzzleRecorder
      */
     protected function input(Request $request)
     {
-        if (!$request->isMultipart()) {
+        if (! $request->isMultipart()) {
             return $request->data();
         }
 
@@ -190,7 +189,7 @@ class TelescopeGuzzleRecorder
             if ($data['contents'] instanceof File) {
                 $value = [
                     'name' => $data['filename'] ?? $data['contents']->getClientOriginalName(),
-                    'size' => ($data['contents']->getSize() / 1000) . 'KB',
+                    'size' => ($data['contents']->getSize() / 1000).'KB',
                     'headers' => $data['headers'] ?? [],
                 ];
             } elseif (is_resource($data['contents'])) {
@@ -198,13 +197,13 @@ class TelescopeGuzzleRecorder
 
                 $value = [
                     'name' => $data['filename'] ?? null,
-                    'size' => $filesize ? ($filesize / 1000) . 'KB' : null,
+                    'size' => $filesize ? ($filesize / 1000).'KB' : null,
                     'headers' => $data['headers'] ?? [],
                 ];
             } elseif (json_encode($data['contents']) === false) {
                 $value = [
                     'name' => $data['filename'] ?? null,
-                    'size' => (strlen($data['contents']) / 1000) . 'KB',
+                    'size' => (strlen($data['contents']) / 1000).'KB',
                     'headers' => $data['headers'] ?? [],
                 ];
             } else {
@@ -225,6 +224,7 @@ class TelescopeGuzzleRecorder
     {
         $queryString = [];
         parse_str($request->url(), $queryString);
+
         return $queryString;
     }
 
@@ -241,7 +241,7 @@ class TelescopeGuzzleRecorder
         $exceptTags = config('telescope-guzzle-watcher.exclude_words_from_uri_tags');
         if (count($exceptTags) > 0) {
             $tags = Arr::where($tags, function ($tag) use ($exceptTags) {
-                return !in_array($tag, $exceptTags);
+                return ! in_array($tag, $exceptTags);
             });
         }
 

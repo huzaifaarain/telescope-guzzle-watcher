@@ -66,12 +66,12 @@ class Request implements ArrayAccess
     public function hasHeader($key, $value = null)
     {
         if (is_null($value)) {
-            return !empty($this->request->getHeaders()[$key]);
+            return ! empty($this->request->getHeaders()[$key]);
         }
 
         $headers = $this->headers();
 
-        if (!Arr::has($headers, $key)) {
+        if (! Arr::has($headers, $key)) {
             return false;
         }
 
@@ -93,7 +93,7 @@ class Request implements ArrayAccess
         }
 
         foreach ($headers as $key => $value) {
-            if (!$this->hasHeader($key, $value)) {
+            if (! $this->hasHeader($key, $value)) {
                 return false;
             }
         }
@@ -132,6 +132,7 @@ class Request implements ArrayAccess
         if ($this->request->getBody()->isSeekable()) {
             $this->request->getBody()->rewind();
         }
+
         return (string) $this->request->getBody();
     }
 
@@ -158,7 +159,7 @@ class Request implements ArrayAccess
      */
     protected function parameters()
     {
-        if (!$this->data) {
+        if (! $this->data) {
             parse_str($this->body(), $parameters);
 
             $this->data = $parameters;
@@ -174,7 +175,7 @@ class Request implements ArrayAccess
      */
     protected function json()
     {
-        if (!$this->data) {
+        if (! $this->data) {
             $this->data = json_decode($this->body(), true);
         }
 
@@ -217,7 +218,6 @@ class Request implements ArrayAccess
      * Determine if the given offset exists.
      *
      * @param  string  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -228,7 +228,6 @@ class Request implements ArrayAccess
      * Get the value for a given offset.
      *
      * @param  string  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -240,7 +239,6 @@ class Request implements ArrayAccess
      *
      * @param  string  $offset
      * @param  mixed  $value
-     * @return void
      *
      * @throws \LogicException
      */
@@ -253,7 +251,6 @@ class Request implements ArrayAccess
      * Unset the value at the given offset.
      *
      * @param  string  $offset
-     * @return void
      *
      * @throws \LogicException
      */
@@ -266,6 +263,7 @@ class Request implements ArrayAccess
     {
         $queryString = [];
         parse_str($this->request->getUri()?->getQuery(), $queryString);
+
         return $queryString;
     }
 }
