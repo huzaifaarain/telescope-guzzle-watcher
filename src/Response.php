@@ -71,7 +71,7 @@ class Response implements ArrayAccess
      */
     public function json($key = null, $default = null)
     {
-        if (!$this->decoded) {
+        if (! $this->decoded) {
             $this->decoded = json_decode($this->body(), true);
         }
 
@@ -106,7 +106,6 @@ class Response implements ArrayAccess
     /**
      * Get a header from the response.
      *
-     * @param  string  $header
      * @return string
      */
     public function header(string $header)
@@ -178,7 +177,6 @@ class Response implements ArrayAccess
      * Determine if the given offset exists.
      *
      * @param  string  $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -189,7 +187,6 @@ class Response implements ArrayAccess
      * Get the value for a given offset.
      *
      * @param  string  $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -201,7 +198,6 @@ class Response implements ArrayAccess
      *
      * @param  string  $offset
      * @param  mixed  $value
-     * @return void
      *
      * @throws \LogicException
      */
@@ -214,7 +210,6 @@ class Response implements ArrayAccess
      * Unset the value at the given offset.
      *
      * @param  string  $offset
-     * @return void
      *
      * @throws \LogicException
      */

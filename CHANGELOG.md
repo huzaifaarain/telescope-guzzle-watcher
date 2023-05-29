@@ -2,6 +2,18 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v2.0.0 - 2023-05-29
+
+### Added
+
+- Added `MuhammadHuzaifa\TelescopeGuzzleWatcher\Request`
+- Added `MuhammadHuzaifa\TelescopeGuzzleWatcher\Response`
+- Added `MuhammadHuzaifa\TelescopeGuzzleWatcher\TelescopeGuzzleRecorder`
+
+### Refactoring
+
+`MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher` has been completely refactored and rewritten. To follow the Design Principles, the core functionality has been extracted to `MuhammadHuzaifa\TelescopeGuzzleWatcher\TelescopeGuzzleRecorder`.
+
 ## v1.2.0 - 2023-05-03
 
 - feat: add support for existing on_stats closure via config
