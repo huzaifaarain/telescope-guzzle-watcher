@@ -6,7 +6,7 @@
 
 ---
 
-This is a simple package that provide custom watcher for intercepting http requests using `guzzlehttp/guzzle` library. The `TelescopeGuzzleWatcher` uses the [on_stats](https://docs.guzzlephp.org/en/stable/request-options.html#on-stats) request option. The watcher extract the data by rewinding the request and response and then it uses the `Telescope::recordClientRequest` for recording the requests in a telescope.
+Telescope Guzzle Watcher provide a custom watcher for intercepting http requests made via [guzzlehttp/guzzle](https://github.com/guzzle/guzzle) php library. The package uses the [on_stats](https://docs.guzzlephp.org/en/stable/request-options.html#on-stats) request option for extracting the request/response data. The watcher intercept and log the request into the [Laravel Telescope](https://laravel.com/docs/telescope) [HTTP Client Watcher](https://laravel.com/docs/telescope#http-client-watcher).
 
 Once the installation and configurations are completed, you will be able to see the request logs under `telescope/client-requests`
 
@@ -30,14 +30,73 @@ This is the contents of the published config file:
 
 ```php
 return [
-    "except_request_headers" => [],
-    "except_response_headers" => [],
-    "enable_uri_tags" => true,
-    "exclude_words_from_uri_tags" => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Except Request Headers
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to exclude the request headers from
+    | being recorded under the telescope. You can exclude any number of
+    | headers containing sensitive information
+    |
+    */
+
+    'except_request_headers' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Except Response Headers
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to exclude the response headers from
+    | being recorded under the telescope. You can exclude any number of
+    | headers containing sensitive information
+    |
+    */
+
+    'except_response_headers' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable URI Tags
+    |--------------------------------------------------------------------------
+    |
+    | This value is used for determining wether the watcher should parse the url
+    | and add it's segments as telescope tags
+    |
+    |
+    */
+
+    'enable_uri_tags' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exclude words from URI tags
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to exclude words or patterns that should
+    | be excluded from the tags list
+    |
+    */
+
+    'exclude_words_from_uri_tags' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Content Size Limit
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to limit the response content.
+    | Default is 64.
+    |
+    */
+
+    'size_limit' => null,
 ];
 ```
 
-You can set the headers that needs to be excluded such API Keys or other sensitive information. You can also tag uri segments by converting them into an array. This feature can be toggled true/false.
+You can set the headers that needs to be excluded such as API Keys or other sensitive information. You can also tag uri segments by converting them into an array. This feature can be toggled true/false.
 
 Edit `config/telescope.php` file and add the watcher
 
@@ -61,7 +120,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Credits
 
-- [Muhammad Huzaifa](https://github.com/huzaifaarain)
+- [Muhammad Huzaifa](https://muhammadhuzaifa.pro)
 
 ## License
 

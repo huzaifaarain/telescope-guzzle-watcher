@@ -53,4 +53,16 @@ return [
     */
 
     'exclude_words_from_uri_tags' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Content Size Limit
+    |--------------------------------------------------------------------------
+    |
+    | This value is used when you need to limit the response content.
+    | Default is 64.
+    |
+    */
+
+    'size_limit' => null,
 ];
