@@ -1,10 +1,13 @@
 {
   "name": "muhammadhuzaifa/telescope-guzzle-watcher",
-  "description": "Simple package for intercepting http request via guzzle client",
+  "description": "Telescope Guzzle Watcher provide a custom watcher for intercepting http requests made via guzzlehttp/guzzle php library. The package uses the on_stats request option for extracting the request/response data. The watcher intercept and log the request into the Laravel Telescope HTTP Client Watcher.",
   "keywords": [
-    "MuhammadHuzaifa",
+    "Muhammad Huzaifa",
     "laravel",
-    "telescope-guzzle-watcher"
+    "telescope",
+    "guzzlehttp telescope watcher",
+    "guzzle telescope watcher",
+    "custom http client watcher"
   ],
   "homepage": "https://github.com/muhammadhuzaifa/telescope-guzzle-watcher",
   "license": "MIT",
