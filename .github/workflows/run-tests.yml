@@ -15,6 +15,7 @@ jobs:
       matrix:
         php: [8.0, 8.1, 8.2]
         laravel: [8, 9, 10]
+        stability: [prefer-lowest, prefer-stable]
         exclude:
           - php: "8.0"
             laravel: 10
@@ -39,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "illuminate/contracts=^${{ matrix.laravel }}" --dev --no-update
-          composer update --prefer-dist --no-interaction --no-progress
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
         run: vendor/bin/phpunit
