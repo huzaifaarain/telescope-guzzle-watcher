@@ -7,20 +7,21 @@ on:
     branches: [main]
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
+  tests:
+    runs-on: ubuntu-22.04
+
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest]
-        php: [8.2, 8.1]
-        laravel: [10.*]
-        stability: [prefer-lowest, prefer-stable]
-        include:
-          - laravel: 10.*
-            testbench: 8.*
+        php: [8.0, 8.1, 8.2]
+        laravel: [8, 9, 10]
+        exclude:
+          - php: "8.0"
+            laravel: 10
+          - php: 8.2
+            laravel: 8
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
@@ -30,21 +31,15 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: curl, dom, gd, json, libxml, mbstring, zip
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
           coverage: none
-
-      - name: Setup problem matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}"
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
-
-      - name: List Installed Dependencies
-        run: composer show -D
+          composer require "illuminate/contracts=^${{ matrix.laravel }}" --dev --no-update
+          composer update --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/pest
+        run: vendor/bin/phpunit
