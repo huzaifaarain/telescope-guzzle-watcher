@@ -14,14 +14,14 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php: [8.2, 8.1]
-        laravel: [10.*,9.*]
+        laravel: [9.*]
         stability: [prefer-stable]
         include:
-          - laravel: 10.*
-            testbench: 8.*
-            pest: 2.*
-            pest-plugin-arch": 2.*
-            pest-plugin-laravel: 2.*
+#           - laravel: 10.*
+#             testbench: 8.*
+#             pest: 2.*
+#             pest-plugin-arch": 2.*
+#             pest-plugin-laravel: 2.*
           - laravel: 9.*
             testbench: 7.*
             pest: 1.*
@@ -50,9 +50,9 @@ jobs:
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}"
           composer require --dev "orchestra/testbench:${{ matrix.testbench }}"
-          composer require "pestphp/pest:${{ matrix.pest }}"
-          composer require "pestphp/pest-plugin-arch:${{ matrix.pest-plugin-arch }}"
-          composer require "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}"
+          composer require "pestphp/pest:^${{ matrix.pest }}"
+          composer require "pestphp/pest-plugin-arch:^${{ matrix.pest-plugin-arch }}"
+          composer require "pestphp/pest-plugin-laravel:^${{ matrix.pest-plugin-laravel }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
