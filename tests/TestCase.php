@@ -2,35 +2,86 @@
 
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use MuhammadHuzaifa\TelescopeGuzzleWatcher\TelescopeGuzzleWatcherServiceProvider;
-use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Queue\Queue;
+use Illuminate\Testing\TestResponse;
+use Laravel\Telescope\Contracts\EntriesRepository;
+use Laravel\Telescope\Storage\DatabaseEntriesRepository;
+use Laravel\Telescope\Storage\EntryModel;
+use Laravel\Telescope\Telescope;
+use Laravel\Telescope\TelescopeServiceProvider;
+use Orchestra\Testbench\TestCase as TestBenchTestCase;
 
-class TestCase extends Orchestra
+class TestCase extends TestBenchTestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Factory::guessFactoryNamesUsing(
-        //     fn (string $modelName) => 'MuhammadHuzaifa\\TelescopeGuzzleWatcher\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        // );
+        TestResponse::macro('terminateTelescope', [$this, 'terminateTelescope']);
+
+        Telescope::flushEntries();
+    }
+
+    protected function tearDown(): void
+    {
+        Telescope::flushEntries();
+
+        parent::tearDown();
     }
 
     protected function getPackageProviders($app)
     {
-        // return [
-        //     TelescopeGuzzleWatcherServiceProvider::class,
-        // ];
+        return [
+            TelescopeServiceProvider::class,
+        ];
     }
 
-    public function getEnvironmentSetUp($app)
+    protected function resolveApplicationCore($app)
     {
-        config()->set('database.default', 'testing');
+        parent::resolveApplicationCore($app);
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_telescope-guzzle-watcher_table.php.stub';
-        $migration->up();
-        */
+        $app->detectEnvironment(function () {
+            return 'self-testing';
+        });
+    }
+
+    /**
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
+    {
+        $config = $app->get('config');
+
+        $config->set('logging.default', 'errorlog');
+
+        $config->set('database.default', 'testbench');
+
+        $config->set('telescope.storage.database.connection', 'testbench');
+
+        $config->set('database.connections.testbench', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
+        $app->when(DatabaseEntriesRepository::class)
+            ->needs('$connection')
+            ->give('testbench');
+    }
+
+    protected function loadTelescopeEntries()
+    {
+        $this->terminateTelescope();
+
+        return EntryModel::all();
+    }
+
+    public function terminateTelescope()
+    {
+        Telescope::store(app(EntriesRepository::class));
     }
 }
