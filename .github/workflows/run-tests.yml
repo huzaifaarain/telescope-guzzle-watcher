@@ -24,9 +24,6 @@ jobs:
 #             pest-plugin-laravel: 2.*
           - laravel: 9.*
             testbench: 7.*
-            pest: 1.*
-            pest-plugin-arch: 1.*
-            pest-plugin-laravel: 1.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -50,13 +47,10 @@ jobs:
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}"
           composer require --dev "orchestra/testbench:${{ matrix.testbench }}"
-          composer require "pestphp/pest:${{ matrix.pest }}"
-          composer require "pestphp/pest-plugin-arch:${{ matrix.pest-plugin-arch }}"
-          composer require "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}"
           composer update --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
         run: composer show -D
 
       - name: Execute tests
-        run: vendor/bin/pest
+        run: composer test
