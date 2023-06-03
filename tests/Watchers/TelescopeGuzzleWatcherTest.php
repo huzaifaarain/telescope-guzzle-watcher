@@ -3,11 +3,7 @@
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests\Watchers;
 
 use GuzzleHttp\Client;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Http;
 use Laravel\Telescope\EntryType;
-use Laravel\Telescope\Tests\FeatureTestCase;
-use Laravel\Telescope\Watchers\ClientRequestWatcher;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests\TestCase;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher;
 
@@ -17,7 +13,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        if (!class_exists(\GuzzleHttp\Client::class)) {
+        if (! class_exists(\GuzzleHttp\Client::class)) {
             $this->markTestSkipped('The "guzzlehttp/guzzle" composer package is required for this test.');
         }
 
@@ -33,7 +29,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
     {
         $client = app(Client::class);
         try {
-            $client->get("https://www.google.com");
+            $client->get('https://www.google.com');
         } catch (\Throwable $th) {
             report($th);
         }
