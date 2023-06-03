@@ -19,8 +19,14 @@ jobs:
         include:
           - laravel: 10.*
             testbench: 8.*
+            pest: 2.*
+            pest-plugin-arch": 2.*
+            pest-plugin-laravel: 2.*
           - laravel: 9.*
             testbench: 7.*
+            pest: 1.*
+            pest-plugin-arch": 1.*
+            pest-plugin-laravel: 1.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -32,7 +38,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: curl, dom, gd, json, libxml, mbstring, zip
           coverage: none
 
       - name: Setup problem matchers
@@ -42,8 +48,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" 
+          composer require "laravel/framework:${{ matrix.laravel }}"
           composer require --dev "orchestra/testbench:${{ matrix.testbench }}"
+          composer require "pestphp/pest:${{ matrix.pest }}"
+          composer require "pestphp/pest-plugin-arch:${{ matrix.pest-plugin-arch }}"
+          composer require "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
