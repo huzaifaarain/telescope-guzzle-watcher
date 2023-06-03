@@ -3,7 +3,6 @@
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Queue\Queue;
 use Illuminate\Testing\TestResponse;
 use Laravel\Telescope\Contracts\EntriesRepository;
 use Laravel\Telescope\Storage\DatabaseEntriesRepository;
