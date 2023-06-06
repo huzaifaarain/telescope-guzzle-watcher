@@ -2,6 +2,12 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v2.0.1 - 2023-06-06
+
+- Update test workflow
+- Added unit test for the watcher
+- Update composer deps
+
 ## v2.0.0 - 2023-05-29
 
 ### Added
