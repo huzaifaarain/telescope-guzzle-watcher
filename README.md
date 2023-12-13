@@ -122,6 +122,11 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 - [Muhammad Huzaifa](https://muhammadhuzaifa.pro)
 
+## Other Projects
+
+- [Laravel Pulse Guzzle Recorder](https://packagist.org/packages/muhammadhuzaifa/laravel-pulse-guzzle-recorder)
+    - Laravel Pulse Guzzle Recorder provide a custom recorder for intercepting http requests made via guzzlehttp/guzzle php library and log them into the Laravel Pulse Slow Outgoing Requests section.
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
