@@ -86,11 +86,8 @@ class TestCase extends TestBenchTestCase
 
     protected function beforeRefreshingDatabase()
     {
-        if (version_compare($this->app->version(), '11.0.0', '>=')) {
-            $config = $this->app->get('config');
-            $config->set('database.migrations.update_date_on_publish', false);
-        }
-
+        $config = $this->app->get('config');
+        $config->set('database.migrations.update_date_on_publish', false);
         $this->artisan('vendor:publish', ['--tag' => 'telescope-migrations']);
     }
 }
