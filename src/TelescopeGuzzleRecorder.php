@@ -73,7 +73,6 @@ class TelescopeGuzzleRecorder
     /**
      * Format the given response object.
      *
-     * @param  \MuhammadHuzaifa\TelescopeGuzzleWatcher\Response  $response
      * @return array|string
      */
     protected function response(Response $response)
@@ -176,7 +175,6 @@ class TelescopeGuzzleRecorder
     /**
      * Extract the input from the given request.
      *
-     * @param  \MuhammadHuzaifa\TelescopeGuzzleWatcher\Request  $request
      * @return array
      */
     protected function input(Request $request)
@@ -217,7 +215,6 @@ class TelescopeGuzzleRecorder
     /**
      * Extract the query string from the given request url
      *
-     * @param  \MuhammadHuzaifa\TelescopeGuzzleWatcher\Request  $request
      * @return array
      */
     protected function queryString(Request $request)
