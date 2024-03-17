@@ -9,11 +9,17 @@ use Laravel\Telescope\Storage\DatabaseEntriesRepository;
 use Laravel\Telescope\Storage\EntryModel;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeServiceProvider;
+use Orchestra\Testbench\Attributes\WithMigration;
+use Orchestra\Testbench\Concerns\WithLaravelMigrations;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as TestBenchTestCase;
 
+use function Orchestra\Testbench\default_skeleton_path;
+
+#[WithMigration('telescope')]
 class TestCase extends TestBenchTestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithLaravelMigrations, WithWorkbench;
 
     protected function setUp(): void
     {
@@ -90,7 +96,15 @@ class TestCase extends TestBenchTestCase
             $config = $this->app->get('config');
             $config->set('database.migrations.update_date_on_publish', false);
         }
+        if (
+            collect(scandir(default_skeleton_path('database/migrations')))
+                ->filter(
+                    fn ($migration) => str_contains($migration, 'telescope')
+                )
+                ->count() == 0
+        ) {
+            $this->artisan('vendor:publish', ['--tag' => 'telescope-migrations']);
+        }
 
-        $this->artisan('vendor:publish', ['--tag' => 'telescope-migrations']);
     }
 }
