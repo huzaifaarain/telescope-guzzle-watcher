@@ -2,6 +2,18 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v3.0.0 - 2024-03-17
+
+### What's Changed
+
+* Add Support For Laravel 11 by @ziarv in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/6
+
+### New Contributors
+
+* @ziarv made their first contribution in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/6
+
+**Full Changelog**: https://github.com/huzaifaarain/telescope-guzzle-watcher/compare/v2.0.1...v3.0.0
+
 ## v2.0.1 - 2023-06-06
 
 - Update test workflow
