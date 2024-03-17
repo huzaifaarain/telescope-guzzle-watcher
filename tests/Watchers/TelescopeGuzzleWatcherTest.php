@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Laravel\Telescope\EntryType;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests\TestCase;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher;
+use PHPUnit\Framework\Attributes\Test;
 
 class TelescopeGuzzleWatcherTest extends TestCase
 {
@@ -22,9 +23,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_should_intercept_and_log_request()
     {
         $client = app(Client::class);
