@@ -14,7 +14,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        if (! class_exists(\GuzzleHttp\Client::class)) {
+        if (!class_exists(\GuzzleHttp\Client::class)) {
             $this->markTestSkipped('The "guzzlehttp/guzzle" composer package is required for this test.');
         }
 
@@ -24,6 +24,9 @@ class TelescopeGuzzleWatcherTest extends TestCase
     }
 
     #[Test]
+    /**
+     * @test
+     */
     public function it_should_intercept_and_log_request()
     {
         $client = app(Client::class);
