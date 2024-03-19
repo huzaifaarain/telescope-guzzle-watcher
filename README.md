@@ -1,4 +1,8 @@
-# Telescope Guzzle Watcher
+# We Stand With Palestine, Pakistan Stand With Palestine
+
+![StandWithPalestine](https://raw.githubusercontent.com/huzaifaarain/huzaifaarain/master/assets/solidarity-palestine.png)
+
+## Telescope Guzzle Watcher
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/muhammadhuzaifa/telescope-guzzle-watcher.svg?style=flat-square)](https://packagist.org/packages/muhammadhuzaifa/telescope-guzzle-watcher)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/huzaifaarain/telescope-guzzle-watcher/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/huzaifaarain/telescope-guzzle-watcher/actions?query=workflow%3Arun-tests+branch%3Amain)
