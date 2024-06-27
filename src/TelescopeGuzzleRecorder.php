@@ -15,13 +15,15 @@ class TelescopeGuzzleRecorder
 
     private Request $request;
 
-    private Response $response;
+    private ?Response $response;
 
     public function __construct(TransferStats $transferStats)
     {
         $this->transferStats = $transferStats;
         $this->request = new Request($transferStats->getRequest());
-        $this->response = new Response($transferStats->getResponse());
+
+        $transferStatsResponse = $transferStats->getResponse();
+        $this->response = $transferStatsResponse ? new Response($transferStatsResponse) : null;
     }
 
     public static function recordGuzzleRequest(TransferStats $transferStats)
@@ -44,9 +46,11 @@ class TelescopeGuzzleRecorder
                 ['query_string' => $this->request->queryString()],
                 ['payload' => $this->payload($this->input($this->request))]
             ),
-            'response_status' => $this->response->status(),
-            'response_headers' => $this->headers($this->response->headers()),
-            'response' => $this->response($this->response),
+            ...$this->response ? [
+                'response_status' => $this->response->status(),
+                'response_headers' => $this->headers($this->response->headers()),
+                'response' => $this->response($this->response),
+            ] : [],
             'duration' => $this->duration(),
         ]);
 
