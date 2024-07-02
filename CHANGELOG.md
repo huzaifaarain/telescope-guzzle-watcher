@@ -2,6 +2,18 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v3.1.0 - 2024-07-02
+
+### What's Changed
+
+* Handle unreachable hosts by @curiousyigit in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/10
+
+### New Contributors
+
+* @curiousyigit made their first contribution in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/10
+
+**Full Changelog**: https://github.com/huzaifaarain/telescope-guzzle-watcher/compare/v3.0.0...v3.1.0
+
 ## v3.0.0 - 2024-03-17
 
 ### What's Changed
