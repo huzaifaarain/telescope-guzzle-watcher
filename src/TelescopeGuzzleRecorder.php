@@ -46,11 +46,9 @@ class TelescopeGuzzleRecorder
                 ['query_string' => $this->request->queryString()],
                 ['payload' => $this->payload($this->input($this->request))]
             ),
-            ...$this->response ? [
-                'response_status' => $this->response->status(),
-                'response_headers' => $this->headers($this->response->headers()),
-                'response' => $this->response($this->response),
-            ] : [],
+            'response_status' => $this->response ? $this->response->status() : null,
+            'response_headers' => $this->response ? $this->headers($this->response->headers()) : null,
+            'response' => $this->response ? $this->response($this->response) : null,
             'duration' => $this->duration(),
         ]);
 
