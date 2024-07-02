@@ -3,6 +3,7 @@
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests\Watchers;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use Laravel\Telescope\EntryType;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests\TestCase;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher;
@@ -40,5 +41,27 @@ class TelescopeGuzzleWatcherTest extends TestCase
         $this->assertSame(EntryType::CLIENT_REQUEST, $entry->type);
         $this->assertSame('GET', $entry->content['method']);
         $this->assertSame('https://www.google.com', $entry->content['uri']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_handle_unreachable_hosts()
+    {
+        $client = app(Client::class);
+        try {
+            $client->get('http://host.does.not.exist');
+        } catch (\Throwable $th) {
+            if (! $th instanceof ConnectException) {
+                report($th);
+            }
+        }
+
+        $entry = $this->loadTelescopeEntries()->first();
+
+        $this->assertNotNull($entry);
+        $this->assertSame(EntryType::CLIENT_REQUEST, $entry->type);
+        $this->assertSame('GET', $entry->content['method']);
+        $this->assertSame('http://host.does.not.exist', $entry->content['uri']);
     }
 }
