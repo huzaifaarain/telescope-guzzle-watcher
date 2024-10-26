@@ -3,7 +3,6 @@
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher;
 
 use GuzzleHttp\TransferStats;
-use Illuminate\Http\File;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Telescope\IncomingEntry;
