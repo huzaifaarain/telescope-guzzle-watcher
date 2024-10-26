@@ -185,33 +185,24 @@ class TelescopeGuzzleRecorder
             return $request->data();
         }
 
-        return collect($request->data())->mapWithKeys(function ($data) {
-            if ($data['contents'] instanceof File) {
-                $value = [
-                    'name' => $data['filename'] ?? $data['contents']->getClientOriginalName(),
-                    'size' => ($data['contents']->getSize() / 1000).'KB',
-                    'headers' => $data['headers'] ?? [],
-                ];
-            } elseif (is_resource($data['contents'])) {
-                $filesize = @filesize(stream_get_meta_data($data['contents'])['uri']);
+        return collect(preg_split("/--.*\r\n/", $request->data()))
+            ->filter()
+            ->values()
+            ->mapWithKeys(function ($content): array {
+                $contentArray = collect(preg_split("/\r\n/", $content))
+                    ->filter()
+                    ->values();
 
-                $value = [
-                    'name' => $data['filename'] ?? null,
-                    'size' => $filesize ? ($filesize / 1000).'KB' : null,
-                    'headers' => $data['headers'] ?? [],
-                ];
-            } elseif (json_encode($data['contents']) === false) {
-                $value = [
-                    'name' => $data['filename'] ?? null,
-                    'size' => (strlen($data['contents']) / 1000).'KB',
-                    'headers' => $data['headers'] ?? [],
-                ];
-            } else {
-                $value = $data['contents'];
-            }
+                $key = $contentArray->firstWhere(fn ($content) => str_contains($content, 'name='));
 
-            return [$data['name'] => $value];
-        })->toArray();
+                if ($hasContentType = $contentArray->search(fn ($contentItem) => str_contains($contentItem, 'Content-Type'))) {
+                    $contentArray = $contentArray->filter(fn ($contentItem, $index) => $index <= $hasContentType);
+                }
+
+                $contentName = str($key)->match("/name\=[\',\"](\w*)[\',\"]/")->toString();
+
+                return [$contentName => $contentArray];
+            })->toArray();
     }
 
     /**
