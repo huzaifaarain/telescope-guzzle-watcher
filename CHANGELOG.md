@@ -2,6 +2,22 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v3.2.0 - 2024-10-26
+
+### What's Changed
+
+* feat: add support for multipart data by @huzaifaarain in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/14
+
+#### Added Multipart Support
+
+The package now support multipart requests from Guzzle, however for the sake of simplicity each content item with the Content-Type specified will be logged without rendering the file in raw or parsed format.
+
+### New Contributors
+
+* @huzaifaarain made their first contribution in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/14
+
+**Full Changelog**: https://github.com/huzaifaarain/telescope-guzzle-watcher/compare/v3.1.0...v3.2.0
+
 ## v3.1.0 - 2024-07-02
 
 ### What's Changed
