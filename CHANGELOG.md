@@ -2,6 +2,10 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v3.2.1 - 2024-11-15
+
+**Full Changelog**: https://github.com/huzaifaarain/telescope-guzzle-watcher/compare/v3.2.0...v3.2.1
+
 ## v3.2.0 - 2024-10-26
 
 ### What's Changed
