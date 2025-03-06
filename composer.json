@@ -1,68 +1,68 @@
 {
-  "name": "muhammadhuzaifa/telescope-guzzle-watcher",
-  "description": "Telescope Guzzle Watcher provide a custom watcher for intercepting http requests made via guzzlehttp/guzzle php library. The package uses the on_stats request option for extracting the request/response data. The watcher intercept and log the request into the Laravel Telescope HTTP Client Watcher.",
-  "keywords": [
-    "Muhammad Huzaifa",
-    "laravel",
-    "telescope",
-    "guzzlehttp telescope watcher",
-    "guzzle telescope watcher",
-    "custom http client watcher"
-  ],
-  "homepage": "https://github.com/huzaifaarain/telescope-guzzle-watcher",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Muhammad Huzaifa",
-      "email": "huzaifa.itgroup@gmail.com",
-      "role": "Developer"
-    }
-  ],
-  "require": {
-    "php": "^8.0.2|^8.1|^8.2",
-    "guzzlehttp/guzzle": "^7.0",
-    "illuminate/contracts": "^11.0|^10.0|^9.0",
-    "laravel/telescope": "^5.0",
-    "spatie/laravel-package-tools": "^1.14.0"
-  },
-  "require-dev": {
-    "laravel/pint": "^1.0",
-    "nunomaduro/collision": "^8.0|^7.9|^6.0",
-    "orchestra/testbench": "^9.0|^8.0|^7.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
-    "analyse": "vendor/bin/phpstan analyse",
-    "test": "vendor/bin/phpunit --testdox",
-    "format": "vendor/bin/pint"
-  },
-  "config": {
-    "sort-packages": true,
-    "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "phpstan/extension-installer": true
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\TelescopeGuzzleWatcherServiceProvider"
-      ],
-      "aliases": {
-        "TelescopeGuzzleWatcher": "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\Facades\\TelescopeGuzzleWatcher"
-      }
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "name": "muhammadhuzaifa/telescope-guzzle-watcher",
+    "description": "Telescope Guzzle Watcher provide a custom watcher for intercepting http requests made via guzzlehttp/guzzle php library. The package uses the on_stats request option for extracting the request/response data. The watcher intercept and log the request into the Laravel Telescope HTTP Client Watcher.",
+    "keywords": [
+        "Muhammad Huzaifa",
+        "laravel",
+        "telescope",
+        "guzzlehttp telescope watcher",
+        "guzzle telescope watcher",
+        "custom http client watcher"
+    ],
+    "homepage": "https://github.com/huzaifaarain/telescope-guzzle-watcher",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Muhammad Huzaifa",
+            "email": "huzaifa.itgroup@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2|^8.1|^8.2",
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/contracts": "^11.0|^10.0|^9.0|^12.0",
+        "laravel/telescope": "^5.0",
+        "spatie/laravel-package-tools": "^1.14.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^8.0|^7.9|^6.0",
+        "orchestra/testbench": "^9.0|^8.0|^7.0|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/phpunit --testdox",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\TelescopeGuzzleWatcherServiceProvider"
+            ],
+            "aliases": {
+                "TelescopeGuzzleWatcher": "MuhammadHuzaifa\\TelescopeGuzzleWatcher\\Facades\\TelescopeGuzzleWatcher"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
