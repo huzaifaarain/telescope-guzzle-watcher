@@ -2,43 +2,34 @@ name: run-tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.0, 8.1, 8.2]
-        laravel: ['^12.0', ^9.0, ^10.0, ^11.0]
+        php: [8.0,8.1,8.2]
+        laravel: ["^11.0", "^10.0", "^9.0"]
         stability: [prefer-stable]
         include:
-          - laravel: ^11.0
+          - laravel: "^11.0"
             testbench: 9.*
-          - laravel: ^10.0
+          - laravel: "^10.0"
             testbench: 8.*
-          - laravel: ^9.0
+          - laravel: "^9.0"
             testbench: 7.*
-          - laravel: '^12.0'
-            testbench: 10.*
         exclude:
-          - laravel: ^11.0
+          - laravel: "^11.0"
             php: 8.1
-          - laravel: ^11.0
+          - laravel: "^11.0"
             php: 8.0
-          - laravel: ^10.0
+          - laravel: "^10.0"
             php: 8.0
-          - laravel: '^12.0'
-            php: 8.0
-          - laravel: '^12.0'
-            php: 8.1
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
