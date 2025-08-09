@@ -1,22 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher;
 
 use ArrayAccess;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
 use LogicException;
+use Psr\Http\Message\RequestInterface;
 
 class Request implements ArrayAccess
 {
     use Macroable;
-
-    /**
-     * The underlying PSR request.
-     *
-     * @var \Psr\Http\Message\RequestInterface
-     */
-    protected $request;
 
     /**
      * The decoded payload for the request.
@@ -28,30 +24,28 @@ class Request implements ArrayAccess
     /**
      * Create a new request instance.
      *
-     * @param  \Psr\Http\Message\RequestInterface  $request
+     * @param  RequestInterface  $request
      * @return void
      */
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
+    public function __construct(
+        /**
+         * The underlying PSR request.
+         */
+        protected $request
+    ) {}
 
     /**
      * Get the request method.
-     *
-     * @return string
      */
-    public function method()
+    public function method(): string
     {
         return $this->request->getMethod();
     }
 
     /**
      * Get the URL of the request.
-     *
-     * @return string
      */
-    public function url()
+    public function url(): string
     {
         return (string) $this->request->getUri();
     }
@@ -77,16 +71,15 @@ class Request implements ArrayAccess
 
         $value = is_array($value) ? $value : [$value];
 
-        return empty(array_diff($value, $headers[$key]));
+        return array_diff($value, $headers[$key]) === [];
     }
 
     /**
      * Determine if the request has the given headers.
      *
      * @param  array|string  $headers
-     * @return bool
      */
-    public function hasHeaders($headers)
+    public function hasHeaders($headers): bool
     {
         if (is_string($headers)) {
             $headers = [$headers => null];
@@ -114,20 +107,16 @@ class Request implements ArrayAccess
 
     /**
      * Get the request headers.
-     *
-     * @return array
      */
-    public function headers()
+    public function headers(): array
     {
         return $this->request->getHeaders();
     }
 
     /**
      * Get the body of the request.
-     *
-     * @return string
      */
-    public function body()
+    public function body(): string
     {
         if ($this->request->getBody()->isSeekable()) {
             $this->request->getBody()->rewind();
@@ -194,24 +183,20 @@ class Request implements ArrayAccess
 
     /**
      * Determine if the request is JSON.
-     *
-     * @return bool
      */
-    public function isJson()
+    public function isJson(): bool
     {
         return $this->hasHeader('Content-Type') &&
-            str_contains($this->header('Content-Type')[0], 'json');
+            str_contains((string) $this->header('Content-Type')[0], 'json');
     }
 
     /**
      * Determine if the request is multipart.
-     *
-     * @return bool
      */
-    public function isMultipart()
+    public function isMultipart(): bool
     {
         return $this->hasHeader('Content-Type') &&
-            str_contains($this->header('Content-Type')[0], 'multipart');
+            str_contains((string) $this->header('Content-Type')[0], 'multipart');
     }
 
     /**
@@ -240,7 +225,7 @@ class Request implements ArrayAccess
      * @param  string  $offset
      * @param  mixed  $value
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function offsetSet($offset, $value): void
     {
@@ -252,7 +237,7 @@ class Request implements ArrayAccess
      *
      * @param  string  $offset
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function offsetUnset($offset): void
     {
@@ -262,7 +247,7 @@ class Request implements ArrayAccess
     public function queryString(): array
     {
         $queryString = [];
-        parse_str($this->request->getUri()?->getQuery(), $queryString);
+        parse_str($this->request->getUri()->getQuery(), $queryString);
 
         return $queryString;
     }

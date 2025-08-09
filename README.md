@@ -14,6 +14,11 @@ Telescope Guzzle Watcher provide a custom watcher for intercepting http requests
 
 Once the installation and configurations are completed, you will be able to see the request logs under `telescope/client-requests`
 
+## Requirements
+
+- PHP ^8.4
+- Laravel 12.x
+
 ## Installation
 
 You can install the package via composer:

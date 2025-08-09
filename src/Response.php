@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher;
 
 use ArrayAccess;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\TransferStats;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use LogicException;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\UriInterface;
+use Stringable;
 
-class Response implements ArrayAccess
+class Response implements ArrayAccess, Stringable
 {
     use Macroable {
         __call as macroCall;
     }
-
-    /**
-     * The underlying PSR response.
-     *
-     * @var \Psr\Http\Message\ResponseInterface
-     */
-    protected $response;
 
     /**
      * The decoded JSON response.
@@ -30,34 +30,34 @@ class Response implements ArrayAccess
     /**
      * The request cookies.
      *
-     * @var \GuzzleHttp\Cookie\CookieJar
+     * @var CookieJar
      */
     public $cookies;
 
     /**
      * The transfer stats for the request.
      *
-     * @var \GuzzleHttp\TransferStats|null
+     * @var TransferStats|null
      */
     public $transferStats;
 
     /**
      * Create a new response instance.
      *
-     * @param  \Psr\Http\Message\MessageInterface  $response
+     * @param  MessageInterface  $response
      * @return void
      */
-    public function __construct($response)
-    {
-        $this->response = $response;
-    }
+    public function __construct(
+        /**
+         * The underlying PSR response.
+         */
+        protected $response
+    ) {}
 
     /**
      * Get the body of the response.
-     *
-     * @return string
      */
-    public function body()
+    public function body(): string
     {
         return (string) $this->response->getBody();
     }
@@ -87,7 +87,7 @@ class Response implements ArrayAccess
      *
      * @return object|array
      */
-    public function object()
+    public function object(): mixed
     {
         return json_decode($this->body(), false);
     }
@@ -96,7 +96,7 @@ class Response implements ArrayAccess
      * Get the JSON decoded body of the response as a collection.
      *
      * @param  string|null  $key
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function collect($key = null)
     {
@@ -105,40 +105,32 @@ class Response implements ArrayAccess
 
     /**
      * Get a header from the response.
-     *
-     * @return string
      */
-    public function header(string $header)
+    public function header(string $header): string
     {
         return $this->response->getHeaderLine($header);
     }
 
     /**
      * Get the headers from the response.
-     *
-     * @return array
      */
-    public function headers()
+    public function headers(): array
     {
         return $this->response->getHeaders();
     }
 
     /**
      * Get the status code of the response.
-     *
-     * @return int
      */
-    public function status()
+    public function status(): int
     {
         return (int) $this->response->getStatusCode();
     }
 
     /**
      * Get the reason phrase of the response.
-     *
-     * @return string
      */
-    public function reason()
+    public function reason(): string
     {
         return $this->response->getReasonPhrase();
     }
@@ -146,7 +138,7 @@ class Response implements ArrayAccess
     /**
      * Get the effective URI of the response.
      *
-     * @return \Psr\Http\Message\UriInterface|null
+     * @return UriInterface|null
      */
     public function effectiveUri()
     {
@@ -155,10 +147,8 @@ class Response implements ArrayAccess
 
     /**
      * Determine if the response was a redirect.
-     *
-     * @return bool
      */
-    public function redirect()
+    public function redirect(): bool
     {
         return $this->status() >= 300 && $this->status() < 400;
     }
@@ -166,7 +156,7 @@ class Response implements ArrayAccess
     /**
      * Get the response cookies.
      *
-     * @return \GuzzleHttp\Cookie\CookieJar
+     * @return CookieJar
      */
     public function cookies()
     {
@@ -199,7 +189,7 @@ class Response implements ArrayAccess
      * @param  string  $offset
      * @param  mixed  $value
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function offsetSet($offset, $value): void
     {
@@ -211,7 +201,7 @@ class Response implements ArrayAccess
      *
      * @param  string  $offset
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function offsetUnset($offset): void
     {
@@ -220,10 +210,8 @@ class Response implements ArrayAccess
 
     /**
      * Get the body of the response.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->body();
     }

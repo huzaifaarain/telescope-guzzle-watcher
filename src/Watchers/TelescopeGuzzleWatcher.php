@@ -1,43 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers;
 
-use Closure;
 use GuzzleHttp\Client;
-use GuzzleHttp\TransferStats;
-use Illuminate\Foundation\Application;
-use Laravel\Telescope\Telescope;
 use Laravel\Telescope\Watchers\Watcher;
-use MuhammadHuzaifa\TelescopeGuzzleWatcher\TelescopeGuzzleRecorder;
+use MuhammadHuzaifa\TelescopeGuzzleWatcher\TelescopeGuzzleClientFactory;
 
 class TelescopeGuzzleWatcher extends Watcher
 {
-    public function register($app)
+    public function register($app): void
     {
-        $app->bind(
-            abstract: Client::class,
-            concrete: $this->buildClient(
-                app: $app,
-            ),
-        );
-    }
-
-    private function buildClient(Application $app): Closure
-    {
-        return static function ($app, array $config): Client {
-            if (Telescope::isRecording()) {
-                $onStatsClosure = $config['on_stats'] ?? null;
-                $config['on_stats'] = function (TransferStats $stats) use ($onStatsClosure) {
-                    TelescopeGuzzleRecorder::recordGuzzleRequest($stats);
-                    if ($onStatsClosure instanceof Closure) {
-                        $onStatsClosure($stats);
-                    }
-                };
-            }
-
-            return new Client(
-                config: $config,
-            );
-        };
+        $app->bind(Client::class, fn ($app, array $config) => app(TelescopeGuzzleClientFactory::class)($config));
     }
 }

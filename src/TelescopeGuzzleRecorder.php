@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher;
 
 use GuzzleHttp\TransferStats;
@@ -7,66 +9,60 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
+use Psr\Http\Message\ResponseInterface;
 
 class TelescopeGuzzleRecorder
 {
-    private TransferStats $transferStats;
+    private readonly Request $request;
 
-    private Request $request;
+    private readonly ?Response $response;
 
-    private ?Response $response;
-
-    public function __construct(TransferStats $transferStats)
+    public function __construct(private readonly TransferStats $transferStats)
     {
-        $this->transferStats = $transferStats;
-        $this->request = new Request($transferStats->getRequest());
+        $this->request = new Request($this->transferStats->getRequest());
 
-        $transferStatsResponse = $transferStats->getResponse();
-        $this->response = $transferStatsResponse ? new Response($transferStatsResponse) : null;
+        $transferStatsResponse = $this->transferStats->getResponse();
+        $this->response = $transferStatsResponse instanceof ResponseInterface ? new Response($transferStatsResponse) : null;
     }
 
-    public static function recordGuzzleRequest(TransferStats $transferStats)
+    public static function recordGuzzleRequest(TransferStats $transferStats): void
     {
-        $instance = new static($transferStats);
+        $instance = new self($transferStats);
         $instance->recordRequest();
     }
 
-    private function recordRequest()
+    private function recordRequest(): void
     {
         if (! Telescope::isRecording()) {
             return;
         }
 
-        $entry = IncomingEntry::make([
+        $incomingEntry = IncomingEntry::make([
             'method' => $this->request->method(),
             'uri' => strtok($this->request->url(), '?'),
             'headers' => $this->headers($this->request->headers()),
-            'payload' => array_merge(
-                ['query_string' => $this->request->queryString()],
-                ['payload' => $this->payload($this->input($this->request))]
-            ),
-            'response_status' => $this->response ? $this->response->status() : null,
-            'response_headers' => $this->response ? $this->headers($this->response->headers()) : null,
-            'response' => $this->response ? $this->response($this->response) : null,
+            'payload' => ['query_string' => $this->request->queryString(), 'payload' => $this->payload($this->input($this->request))],
+            'response_status' => $this->response instanceof Response ? $this->response->status() : null,
+            'response_headers' => $this->response instanceof Response ? $this->headers($this->response->headers()) : null,
+            'response' => $this->response instanceof Response ? $this->response($this->response) : null,
             'duration' => $this->duration(),
         ]);
 
         if (config('telescope-guzzle-watcher.enable_uri_tags') === true) {
-            $entry->tags($this->extractTagsFromUri());
+            $incomingEntry->tags($this->extractTagsFromUri());
         }
 
-        Telescope::recordClientRequest($entry);
+        Telescope::recordClientRequest($incomingEntry);
     }
 
     /**
      * Determine if the content is within the set limits.
      *
      * @param  string  $content
-     * @return bool
      */
-    public function contentWithinLimits($content)
+    public function contentWithinLimits($content): bool
     {
-        $limit = config('telescope-guzzle-watcher.size_limit') ?? 64;
+        $limit = config('telescope-guzzle-watcher.size_limit', 64);
 
         return mb_strlen($content) / 1000 <= $limit;
     }
@@ -86,26 +82,24 @@ class TelescopeGuzzleRecorder
             $stream->rewind();
         }
 
-        if (is_string($content)) {
-            if (
-                is_array(json_decode($content, true)) &&
-                json_last_error() === JSON_ERROR_NONE
-            ) {
-                return $this->contentWithinLimits($content)
-                    ? $this->hideParameters(json_decode($content, true), Telescope::$hiddenResponseParameters)
-                    : 'Purged By Telescope Guzzle Watcher';
-            }
+        if (
+            is_array(json_decode($content, true)) &&
+            json_last_error() === JSON_ERROR_NONE
+        ) {
+            return $this->contentWithinLimits($content)
+                ? $this->hideParameters(json_decode($content, true), Telescope::$hiddenResponseParameters)
+                : 'Purged By Telescope Guzzle Watcher';
+        }
 
-            if (Str::startsWith(strtolower($response->header('Content-Type') ?? ''), 'text/plain')) {
-                return $this->contentWithinLimits($content) ? $content : 'Purged By Telescope Guzzle Watcher';
-            }
+        if (Str::startsWith(strtolower($response->header('Content-Type') ?? ''), 'text/plain')) {
+            return $this->contentWithinLimits($content) ? $content : 'Purged By Telescope Guzzle Watcher';
         }
 
         if ($response->redirect()) {
             return 'Redirected to '.$response->header('Location');
         }
 
-        if (empty($content)) {
+        if ($content === '' || $content === '0') {
             return 'Empty Response';
         }
 
@@ -120,13 +114,9 @@ class TelescopeGuzzleRecorder
      */
     protected function headers($headers)
     {
-        $headerNames = collect($headers)->keys()->map(function ($headerName) {
-            return strtolower($headerName);
-        })->toArray();
+        $headerNames = collect($headers)->keys()->map(fn ($headerName) => strtolower((string) $headerName))->toArray();
 
-        $headerValues = collect($headers)->map(function ($value) {
-            return $value[0];
-        })->toArray();
+        $headerValues = collect($headers)->map(fn ($value) => $value[0])->toArray();
 
         $headers = array_combine($headerNames, $headerValues);
 
@@ -192,10 +182,10 @@ class TelescopeGuzzleRecorder
                     ->filter()
                     ->values();
 
-                $key = $contentArray->firstWhere(fn ($content) => str_contains($content, 'name='));
+                $key = $contentArray->firstWhere(fn ($content): bool => str_contains($content, 'name='));
 
-                if ($hasContentType = $contentArray->search(fn ($contentItem) => str_contains($contentItem, 'Content-Type'))) {
-                    $contentArray = $contentArray->filter(fn ($contentItem, $index) => $index <= $hasContentType);
+                if ($hasContentType = $contentArray->search(fn ($contentItem): bool => str_contains($contentItem, 'Content-Type'))) {
+                    $contentArray = $contentArray->filter(fn ($contentItem, $index): bool => $index <= $hasContentType);
                 }
 
                 $contentName = str($key)->match("/name\=[\',\"](\w*)[\',\"]/")->toString();
@@ -206,10 +196,8 @@ class TelescopeGuzzleRecorder
 
     /**
      * Extract the query string from the given request url
-     *
-     * @return array
      */
-    protected function queryString(Request $request)
+    protected function queryString(Request $request): array
     {
         $queryString = [];
         parse_str($request->url(), $queryString);
@@ -229,9 +217,7 @@ class TelescopeGuzzleRecorder
 
         $exceptTags = config('telescope-guzzle-watcher.exclude_words_from_uri_tags');
         if (count($exceptTags) > 0) {
-            $tags = Arr::where($tags, function ($tag) use ($exceptTags) {
-                return ! in_array($tag, $exceptTags);
-            });
+            $tags = Arr::where($tags, fn ($tag): bool => ! in_array($tag, $exceptTags));
         }
 
         return $tags;
@@ -242,10 +228,12 @@ class TelescopeGuzzleRecorder
      *
      * @return int|null
      */
-    private function duration()
+    private function duration(): ?float
     {
         if ($this->transferStats && $this->transferStats->getTransferTime()) {
             return floor($this->transferStats->getTransferTime() * 1000);
         }
+
+        return null;
     }
 }
