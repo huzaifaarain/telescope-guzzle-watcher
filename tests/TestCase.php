@@ -91,6 +91,11 @@ class TestCase extends TestBenchTestCase
             $config->set('database.migrations.update_date_on_publish', false);
         }
 
-        $this->artisan('vendor:publish', ['--tag' => 'telescope-migrations']);
+        $hasPublishedMigration = collect(glob(base_path('/database/migrations/*.php')))
+            ->filter(fn ($file) => str_contains($file, 'telescope_entries'))
+            ->count();
+        if (! $hasPublishedMigration) {
+            $this->artisan('vendor:publish', ['--tag' => 'telescope-migrations']);
+        }
     }
 }

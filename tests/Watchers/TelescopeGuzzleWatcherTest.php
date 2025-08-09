@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ConnectException;
 use Laravel\Telescope\EntryType;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Tests\TestCase;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher;
+use PHPUnit\Framework\Attributes\Test;
 
 class TelescopeGuzzleWatcherTest extends TestCase
 {
@@ -26,13 +27,14 @@ class TelescopeGuzzleWatcherTest extends TestCase
     /**
      * @test
      */
+    #[Test]
     public function it_should_intercept_and_log_request()
     {
         $client = app(Client::class);
         try {
             $client->get('https://www.google.com');
         } catch (\Throwable $th) {
-            report($th);
+
         }
 
         $entry = $this->loadTelescopeEntries()->first();
@@ -46,6 +48,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
     /**
      * @test
      */
+    #[Test]
     public function it_should_handle_unreachable_hosts()
     {
         $client = app(Client::class);
@@ -53,7 +56,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
             $client->get('http://host.does.not.exist');
         } catch (\Throwable $th) {
             if (! $th instanceof ConnectException) {
-                report($th);
+
             }
         }
 
