@@ -26,6 +26,7 @@ Once the installation and configurations are completed, you will be able to see 
   - [Registering the Watcher](#registering-the-watcher)
   - [Resolving Guzzle Clients](#resolving-guzzle-clients)
   - [Using Multiple Clients](#using-multiple-clients)
+  - [Integration Example: HubSpot PHP SDK](#integration-example-hubspot-php-sdk)
   - [Testing \& Verification](#testing--verification)
   - [Troubleshooting](#troubleshooting)
   - [Changelog](#changelog)
@@ -137,6 +138,53 @@ The watcher supports any number of clients or middleware stacks as long as they 
     ```
 
 - **Custom middleware:** resolve the client as normal, then push additional middleware. Telescope will continue to receive the transfer statistics.
+
+## Integration Example: HubSpot PHP SDK
+
+The [HubSpot PHP SDK](https://github.com/HubSpot/hubspot-api-php) ships with a Pluggable HTTP client stack. To hook it into Telescope you only need to hand it a Guzzle client from the container.
+
+1. **Install the SDK**
+
+    ```bash
+    composer require hubspot/api-client
+    ```
+
+2. **Bind a HubSpot client that reuses the Telescope-aware Guzzle client**
+
+    ```php
+    use HubSpot\Factory\HubSpotFactory;
+    use HubSpot\Discovery\Discovery;
+
+    $this->app->singleton(Discovery::class, function ($app) {
+        $guzzle = $app->make(\GuzzleHttp\Client::class, [
+            'config' => [
+                'base_uri' => 'https://api.hubapi.com',
+                'timeout' => 10,
+            ],
+        ]);
+
+        return HubSpot\Factory::createWithAccessToken(
+            'your-access-token', 
+            $guzzle
+        );
+    });
+    ```
+
+    Adjust the configuration array to include proxies, retry middleware, or any other Guzzle options your integration needs.
+
+3. **Use the client**
+
+    ```php
+    use HubSpot\Discovery\Discovery;
+
+    Route::get('/hubspot/contacts', function (Discovery $hubspot) {
+        return $hubspot->crm()->contacts()->basicApi()->getPage()->toArray();
+    });
+    ```
+
+    Each call will now appear in Telescope under `Client Requests`, tagged with `api.hubapi.com` and the path segments (unless you disable URI tagging).
+
+> **Tip:** HubSpot APIs enforce rate limits. Telescope will record both successful responses and 429 errors so you can diagnose throttling in development.
 
 ## Testing & Verification
 
