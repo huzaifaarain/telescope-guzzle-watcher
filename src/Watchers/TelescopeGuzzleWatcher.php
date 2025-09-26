@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers;
 
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use Illuminate\Http\Client\Request;
@@ -17,6 +16,7 @@ use Laravel\Telescope\Watchers\ClientRequestWatcher;
 use LogicException;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\GuzzleClientFactory;
 use Override;
+use Psr\Http\Message\ResponseInterface;
 
 class TelescopeGuzzleWatcher extends ClientRequestWatcher
 {
@@ -41,7 +41,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
 
     private function record(): void
     {
-        if (!Telescope::isRecording() || ! $this->request instanceof Request) {
+        if (! Telescope::isRecording() || ! $this->request instanceof Request) {
             return;
         }
 
@@ -122,7 +122,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
     public function register($app): void
     {
         $app->bind(function ($app, array $parameters): Client {
-            if (Arr::exists($parameters, 'config') && !is_array($parameters['config'])) {
+            if (Arr::exists($parameters, 'config') && ! is_array($parameters['config'])) {
                 throw new LogicException("\$parameters['config'] must be associative array");
             }
 
@@ -144,7 +144,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
     #[Override]
     protected function input(Request $request): array
     {
-        if (!$request->isMultipart()) {
+        if (! $request->isMultipart()) {
             return parent::input($request);
         }
 
@@ -197,7 +197,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             }
 
             $contentLines = $lines;
-            $contentTypeIndex = array_find_key($contentLines, fn($line): bool => str_contains((string) $line, 'Content-Type'));
+            $contentTypeIndex = array_find_key($contentLines, fn ($line): bool => str_contains($line, 'Content-Type'));
 
             if ($contentTypeIndex !== null) {
                 $contentLines = array_slice($contentLines, 0, $contentTypeIndex + 1);

@@ -130,7 +130,7 @@ final class TelescopeGuzzleWatcherTest extends TestCase
     #[Test]
     public function it_registers_guzzle_client_binding(): void
     {
-        $watcher = new TelescopeGuzzleWatcher();
+        $watcher = new TelescopeGuzzleWatcher;
         $watcher->register($this->app);
 
         $client = $this->app->make(Client::class, ['config' => ['base_uri' => 'https://example.com']]);
@@ -141,7 +141,7 @@ final class TelescopeGuzzleWatcherTest extends TestCase
     #[Test]
     public function it_requires_config_parameter_to_be_array(): void
     {
-        $watcher = new TelescopeGuzzleWatcher();
+        $watcher = new TelescopeGuzzleWatcher;
         $watcher->register($this->app);
 
         $this->expectException(LogicException::class);
@@ -326,7 +326,8 @@ final class TelescopeGuzzleWatcherTest extends TestCase
 
     private function makeInputAwareWatcher(): object
     {
-        return new class extends TelescopeGuzzleWatcher {
+        return new class extends TelescopeGuzzleWatcher
+        {
             public function exposeInput(Request $request): array
             {
                 return $this->input($request);

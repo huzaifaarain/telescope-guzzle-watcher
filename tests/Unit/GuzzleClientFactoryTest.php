@@ -44,10 +44,9 @@ final class GuzzleClientFactoryTest extends TestCase
     {
         Telescope::$shouldRecord = false;
 
-        $factory = new GuzzleClientFactory();
+        $factory = new GuzzleClientFactory;
 
-        $onStats = static function (): void {
-        };
+        $onStats = static function (): void {};
 
         $client = $factory([
             'base_uri' => 'https://example.com',
@@ -64,7 +63,7 @@ final class GuzzleClientFactoryTest extends TestCase
         Telescope::$shouldRecord = true;
         Telescope::flushEntries();
 
-        $factory = new GuzzleClientFactory();
+        $factory = new GuzzleClientFactory;
 
         $called = false;
         $client = $factory([
@@ -91,7 +90,7 @@ final class GuzzleClientFactoryTest extends TestCase
         Telescope::$shouldRecord = true;
         Telescope::flushEntries();
 
-        $factory = new GuzzleClientFactory();
+        $factory = new GuzzleClientFactory;
 
         $client = $factory([
             'base_uri' => 'https://example.com',
