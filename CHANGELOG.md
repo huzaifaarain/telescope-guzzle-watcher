@@ -2,6 +2,37 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v4.0.0 - 2025-09-26
+
+### 4.x – Telescope Guzzle Watcher
+
+#### Breaking Changes
+
+- Bumped minimum requirements to **PHP 8.4** and **Laravel 12.x**. Projects on older versions need to upgrade before installing this release.
+- Development tooling now targets **Orchestra Testbench 10.x**. Update your package dev dependencies if you run the Testbench suite locally.
+- The watcher expects Guzzle clients to be resolved through Laravel’s service container. Any direct `new Client()` instantiations must be replaced with `app(GuzzleHttp\Client::class, [...])` to keep Telescope logging intact.
+
+#### Added
+
+- A full developer guide in `README.md`, including installation, configuration deep dives, multi-client patterns, and troubleshooting tips.
+- A hands-on integration example showing how to route the official HubSpot PHP SDK through the Telescope-aware Guzzle client.
+- A strict PHPStan profile and an expanded PHPUnit suite that achieve 100 % code and type coverage.
+
+#### Changed
+
+- Multipart payload handling is cleaner: a dedicated parser processes multipart sections, non-multipart requests defer to the parent implementation, and `array_find_key` simplifies header detection.
+- The custom Guzzle binding now validates incoming config arrays, preserves existing `on_stats` callbacks, and normalises URI tag generation and filtering.
+- Coding standards across watcher and test files were refreshed for consistency and easier contributions.
+
+#### Fixed
+
+- Edge cases in tag filtering, duration capture, and payload extraction were resolved, ensuring Telescope entries remain accurate even with unusual responses.
+- #20 Correct Guzzle client binding in Service Container
+
+#### CI
+
+- GitHub Actions now runs against **PHP 8.4**, **Laravel 12**, and **Testbench 10**, aligning automated checks with the package’s supported stack.
+
 ## v3.2.2 - 2025-03-06
 
 ### What's Changed
