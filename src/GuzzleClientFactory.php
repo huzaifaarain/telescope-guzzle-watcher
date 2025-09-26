@@ -12,6 +12,9 @@ use MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers\TelescopeGuzzleWatcher;
 
 class GuzzleClientFactory
 {
+    /**
+     * @param  array<string, mixed>  $config
+     */
     public function __invoke(array $config): Client
     {
         if (Telescope::isRecording()) {

@@ -10,6 +10,7 @@ use Laravel\Telescope\Storage\EntryModel;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeServiceProvider;
 use Orchestra\Testbench\TestCase as TestBenchTestCase;
+use MuhammadHuzaifa\TelescopeGuzzleWatcher\TelescopeGuzzleWatcherServiceProvider;
 
 class TestCase extends TestBenchTestCase
 {
@@ -35,6 +36,7 @@ class TestCase extends TestBenchTestCase
     {
         return [
             TelescopeServiceProvider::class,
+            TelescopeGuzzleWatcherServiceProvider::class,
         ];
     }
 
