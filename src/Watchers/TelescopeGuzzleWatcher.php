@@ -24,7 +24,8 @@ class TelescopeGuzzleWatcher extends Watcher
 
     private function buildClient(Application $app): Closure
     {
-        return static function ($app, array $config): Client {
+        return static function ($app, array $parameters): Client {
+            $config = $parameters['config'] ?? []
             if (Telescope::isRecording()) {
                 $onStatsClosure = $config['on_stats'] ?? null;
                 $config['on_stats'] = function (TransferStats $stats) use ($onStatsClosure) {
