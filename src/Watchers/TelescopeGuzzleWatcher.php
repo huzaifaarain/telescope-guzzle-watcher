@@ -139,18 +139,25 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
     /**
      * Extract the input from the given request.
      *
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     #[Override]
     protected function input(Request $request): array
     {
         if (!$request->isMultipart()) {
-            /** @var array<string, mixed> $data */
-            $data = $request->data();
-
-            return $data;
+            return parent::input($request);
         }
 
+        return $this->parseMultipartBody($request);
+    }
+
+    /**
+     * Parse raw multipart form-data body into a structured payload.
+     *
+     * @return array<string, array<int, string>>
+     */
+    private function parseMultipartBody(Request $request): array
+    {
         $rawBody = $request->body();
 
         if ($rawBody === '') {
@@ -169,8 +176,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             $trimmedSection = trim($section);
 
             $lines = preg_split("/\r\n/", $trimmedSection, limit: -1, flags: PREG_SPLIT_NO_EMPTY) ?: [];
-
-            $lines = array_map(static fn ($line): string => trim($line), $lines);
+            $lines = array_map(static fn ($line): string => trim((string) $line), $lines);
 
             $keyLine = null;
             foreach ($lines as $line) {
@@ -191,7 +197,14 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             }
 
             $contentLines = $lines;
-            $contentTypeIndex = array_find_key($contentLines, fn($line): bool => str_contains((string) $line, 'Content-Type'));
+            $contentTypeIndex = null;
+
+            foreach ($contentLines as $index => $line) {
+                if (str_contains($line, 'Content-Type')) {
+                    $contentTypeIndex = $index;
+                    break;
+                }
+            }
 
             if ($contentTypeIndex !== null) {
                 $contentLines = array_slice($contentLines, 0, $contentTypeIndex + 1);
