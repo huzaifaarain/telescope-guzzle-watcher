@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\Watchers\ClientRequestWatcher;
+use LogicException;
 use MuhammadHuzaifa\TelescopeGuzzleWatcher\GuzzleClientFactory;
 use Override;
 
@@ -45,7 +46,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
 
     private function record(): void
     {
-        if (! Telescope::isRecording()) {
+        if (!Telescope::isRecording()) {
             return;
         }
 
@@ -92,7 +93,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
 
         $exceptTags = config('telescope-guzzle-watcher.exclude_words_from_uri_tags');
         if (count($exceptTags) > 0) {
-            $tags = Arr::where($tags, fn ($tag): bool => ! in_array($tag, $exceptTags));
+            $tags = Arr::where($tags, fn($tag): bool => !in_array($tag, $exceptTags));
         }
 
         return $tags;
@@ -101,7 +102,12 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
     #[Override]
     public function register($app): void
     {
-        $app->bind(Client::class, fn ($app, array $config) => app(GuzzleClientFactory::class)($config));
+        $app->bind(Client::class, function ($app, array $parameters) {
+            if (Arr::exists($parameters, 'config') && !is_array($parameters['config'])) {
+                throw new LogicException("\$parameters['config'] must be associative array");
+            }
+            return app(GuzzleClientFactory::class)($parameters['config'] ?? []);
+        });
     }
 
     /**
@@ -112,7 +118,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
     #[Override]
     protected function input(Request $request)
     {
-        if (! $request->isMultipart()) {
+        if (!$request->isMultipart()) {
             return $request->data();
         }
 
@@ -124,10 +130,10 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
                     ->filter()
                     ->values();
 
-                $key = $contentArray->firstWhere(fn ($content): bool => str_contains($content, 'name='));
+                $key = $contentArray->firstWhere(fn($content): bool => str_contains($content, 'name='));
 
-                if ($hasContentType = $contentArray->search(fn ($contentItem): bool => str_contains($contentItem, 'Content-Type'))) {
-                    $contentArray = $contentArray->filter(fn ($contentItem, $index): bool => $index <= $hasContentType);
+                if ($hasContentType = $contentArray->search(fn($contentItem): bool => str_contains($contentItem, 'Content-Type'))) {
+                    $contentArray = $contentArray->filter(fn($contentItem, $index): bool => $index <= $hasContentType);
                 }
 
                 $contentName = str($key)->match("/name\=[\',\"](\w*)[\',\"]/")->toString();
