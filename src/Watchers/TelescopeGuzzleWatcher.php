@@ -176,7 +176,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             $trimmedSection = trim($section);
 
             $lines = preg_split("/\r\n/", $trimmedSection, limit: -1, flags: PREG_SPLIT_NO_EMPTY) ?: [];
-            $lines = array_map(static fn ($line): string => trim((string) $line), $lines);
+            $lines = array_map(static fn ($line): string => trim($line), $lines);
 
             $keyLine = null;
             foreach ($lines as $line) {
@@ -197,14 +197,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             }
 
             $contentLines = $lines;
-            $contentTypeIndex = null;
-
-            foreach ($contentLines as $index => $line) {
-                if (str_contains($line, 'Content-Type')) {
-                    $contentTypeIndex = $index;
-                    break;
-                }
-            }
+            $contentTypeIndex = array_find_key($contentLines, fn($line): bool => str_contains((string) $line, 'Content-Type'));
 
             if ($contentTypeIndex !== null) {
                 $contentLines = array_slice($contentLines, 0, $contentTypeIndex + 1);
