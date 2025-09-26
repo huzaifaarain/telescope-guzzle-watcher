@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MuhammadHuzaifa\TelescopeGuzzleWatcher\Watchers;
 
+use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use Illuminate\Http\Client\Request;
@@ -29,7 +30,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
         $instance->request = new Request($transferStats->getRequest());
         if ($transferStats->hasResponse()) {
             $response = $transferStats->getResponse();
-            if ($response !== null) {
+            if ($response instanceof ResponseInterface) {
                 $instance->response = new Response($response);
                 $instance->response->transferStats = $transferStats;
             }
@@ -90,11 +91,11 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             return [];
         }
 
-        $tags = [(string) $parsedUri['host']];
+        $tags = [$parsedUri['host']];
 
         if (isset($parsedUri['path'])) {
-            foreach (explode('/', (string) $parsedUri['path']) as $segment) {
-                $segment = trim((string) $segment);
+            foreach (explode('/', $parsedUri['path']) as $segment) {
+                $segment = trim($segment);
 
                 if ($segment === '') {
                     continue;
@@ -120,17 +121,18 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
     #[Override]
     public function register($app): void
     {
-        $app->bind(Client::class, function ($app, array $parameters) {
+        $app->bind(function ($app, array $parameters): Client {
             if (Arr::exists($parameters, 'config') && !is_array($parameters['config'])) {
                 throw new LogicException("\$parameters['config'] must be associative array");
             }
-            /** @var GuzzleClientFactory $factory */
-            $factory = app(GuzzleClientFactory::class);
+
+            /** @var GuzzleClientFactory $guzzleClientFactory */
+            $guzzleClientFactory = app(GuzzleClientFactory::class);
 
             /** @var array<string, mixed> $config */
             $config = $parameters['config'] ?? [];
 
-            return $factory($config);
+            return $guzzleClientFactory($config);
         });
     }
 
@@ -168,7 +170,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
 
             $lines = preg_split("/\r\n/", $trimmedSection, limit: -1, flags: PREG_SPLIT_NO_EMPTY) ?: [];
 
-            $lines = array_map(static fn ($line): string => trim((string) $line), $lines);
+            $lines = array_map(static fn ($line): string => trim($line), $lines);
 
             $keyLine = null;
             foreach ($lines as $line) {
@@ -189,14 +191,7 @@ class TelescopeGuzzleWatcher extends ClientRequestWatcher
             }
 
             $contentLines = $lines;
-            $contentTypeIndex = null;
-
-            foreach ($contentLines as $index => $line) {
-                if (str_contains($line, 'Content-Type')) {
-                    $contentTypeIndex = $index;
-                    break;
-                }
-            }
+            $contentTypeIndex = array_find_key($contentLines, fn($line): bool => str_contains((string) $line, 'Content-Type'));
 
             if ($contentTypeIndex !== null) {
                 $contentLines = array_slice($contentLines, 0, $contentTypeIndex + 1);
