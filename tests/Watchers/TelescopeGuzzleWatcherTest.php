@@ -55,9 +55,7 @@ class TelescopeGuzzleWatcherTest extends TestCase
         try {
             $client->get('http://host.does.not.exist');
         } catch (\Throwable $th) {
-            if (! $th instanceof ConnectException) {
-
-            }
+            throw_unless($th instanceof ConnectException, $th);
         }
 
         $entry = $this->loadTelescopeEntries()->first();
