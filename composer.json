@@ -19,16 +19,19 @@
         }
     ],
     "require": {
-        "php": "^8.0.2|^8.1|^8.2",
-        "guzzlehttp/guzzle": "^7.0",
-        "illuminate/contracts": "^11.0|^10.0|^9.0|^12.0",
-        "laravel/telescope": "^5.0",
-        "spatie/laravel-package-tools": "^1.14.0"
+        "php": "^8.4",
+        "guzzlehttp/guzzle": "^7.9",
+        "illuminate/contracts": "^12.0",
+        "laravel/telescope": "^5.11",
+        "spatie/laravel-package-tools": "^1.92"
     },
     "require-dev": {
-        "laravel/pint": "^1.0",
-        "nunomaduro/collision": "^8.0|^7.9|^6.0",
-        "orchestra/testbench": "^9.0|^8.0|^7.0|^10.0"
+        "driftingly/rector-laravel": "^2.0",
+        "laravel/pint": "^1.24",
+        "nunomaduro/collision": "^8.8",
+        "orchestra/testbench": "^10.4",
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -42,9 +45,16 @@
     },
     "scripts": {
         "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "vendor/bin/phpstan analyse src",
         "test": "vendor/bin/phpunit --testdox",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "rector": "vendor/bin/rector",
+        "build": [
+            "@composer rector",
+            "@composer format",
+            "@composer analyse",
+            "@composer test"
+        ]
     },
     "config": {
         "sort-packages": true,
