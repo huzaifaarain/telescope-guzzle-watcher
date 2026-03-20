@@ -2,6 +2,15 @@
 
 All notable changes to `telescope-guzzle-watcher` will be documented in this file.
 
+## v4.1.0 - 2026-03-20
+
+### What's Changed
+
+* 4.x by @huzaifaarain in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/23
+* Laravel 13.x Compatibility by @laravel-shift in https://github.com/huzaifaarain/telescope-guzzle-watcher/pull/24
+
+**Full Changelog**: https://github.com/huzaifaarain/telescope-guzzle-watcher/compare/v4.0.0...v4.1.0
+
 ## v4.0.0 - 2025-09-26
 
 ### 4.x – Telescope Guzzle Watcher
